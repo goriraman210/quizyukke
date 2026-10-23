@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>クイズアリーナ</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <section id="name-screen" class="screen active">
+      <div class="panel login-panel">
+        <div class="logo">🎮</div>
+        <p class="eyebrow">QUIZ ARENA</p>
+        <h1>クイズアリーナ</h1>
+        <p class="muted">ニックネームを入力して参加しよう！</p>
+        <form id="join-form">
+          <label for="player-name">ニックネーム</label>
+          <input id="player-name" type="text" placeholder="例：さくら" maxlength="20" autocomplete="nickname" required>
+          <label for="join-code">参加コード</label>
+          <input id="join-code" type="text" placeholder="主催者から共有された参加コード" maxlength="40" autocomplete="off" required>
+          <label for="admin-code">管理者コード <span class="muted">(参加者は空欄)</span></label>
+          <input id="admin-code" type="password" placeholder="管理者コード" autocomplete="off">
+          <button class="primary full" type="submit">参加する！</button>
+        </form>
+        <p class="small muted">管理者はコードを入力するとクイズを作成・編集できます。</p>
+      </div>
+    </section>
+
+    <section id="home-screen" class="screen">
+      <header class="topbar">
+        <div><p class="eyebrow">QUIZ ARENA</p><h1>クイズアリーナ</h1></div>
+        <div class="user-chip">👤 <span id="welcome-name">ゲスト</span></div>
+      </header>
+      <div class="panel hero">
+        <p class="eyebrow">READY?</p>
+        <h2 id="home-quiz-title">クイズに挑戦しよう！</h2>
+        <p class="muted"><span id="question-count">0</span> 問のクイズ</p>
+        <div class="button-row">
+          <button id="start-quiz" class="primary" type="button" hidden>＋ クイズを作成</button>
+          <button id="edit-quiz" class="secondary" type="button" hidden>クイズを編集</button>
+          <button id="play-home-quiz" class="primary" type="button">クイズに挑戦</button>
+        </div>
+        <p id="home-message" class="small muted"></p>
+        <p class="small muted">参加コード：<strong id="home-join-code">未設定</strong></p>
+      </div>
+      <div class="panel info-panel">
+        <h3>遊び方</h3>
+        <ol><li>ニックネームを入力して参加</li><li>クイズに回答してポイントを獲得</li><li>最後に結果と正解を確認</li></ol>
+        <p class="small muted">この版は同じブラウザー内で遊ぶシンプルなクイズです。複数端末のリアルタイム対戦にはサーバーが必要です。</p>
+        <button id="change-player" class="text-button" type="button">名前を変更</button>
+      </div>
+    </section>
+
+    <section id="editor-screen" class="screen">
+      <header class="topbar">
+        <div><p class="eyebrow">QUIZ BUILDER</p><h1>クイズを作成</h1></div>
+        <button id="editor-home" class="secondary" type="button">ホームへ</button>
+      </header>
+      <div class="panel">
+        <label for="quiz-title">クイズタイトル</label>
+        <input id="quiz-title" type="text" maxlength="100" placeholder="クイズのタイトル">
+        <label for="creator-join-code">参加コード（主催者が決める）</label>
+        <input id="creator-join-code" type="text" maxlength="40" placeholder="例：PIKAGORI2026" autocomplete="off">
+        <p class="small muted">参加者にこのコードを共有してください。参加者は名前入力画面でコードを入力します。</p>
+        <div class="section-heading"><h2>問題一覧</h2><button id="add-question" class="secondary" type="button">＋ 問題を追加</button></div>
+        <div id="question-list"></div>
+        <div class="button-row sticky-actions">
+          <button id="save-quiz" class="secondary" type="button">保存</button>
+          <button id="play-quiz" class="primary" type="button">このクイズをプレイ</button>
+        </div>
+        <p class="small muted">問題・正解・参加コードはこのブラウザーに保存されます。</p>
+      </div>
+    </section>
+
+    <section id="play-screen" class="screen">
+      <header class="play-top">
+        <span id="play-question-number">問題 1 / 1</span>
+        <span class="timer-pill">⏱ <span id="quiz-timer">20</span>秒</span>
+      </header>
+      <div class="progress-track"><div id="quiz-progress"></div></div>
+      <div class="panel question-panel">
+        <p class="eyebrow" id="play-quiz-title">クイズ</p>
+        <h2 id="play-question-title">問題文</h2>
+        <img id="question-image" alt="問題画像" hidden>
+        <div id="play-answers" class="answer-grid"></div>
+        <p id="answer-feedback" aria-live="polite"></p>
+        <button id="next-question" class="primary full" type="button" hidden>次へ</button>
+      </div>
+    </section>
+
+    <section id="results-screen" class="screen">
+      <div class="panel results-panel">
+        <div class="logo">🏆</div>
+        <p class="eyebrow">RESULT</p>
+        <h1 id="results-title">結果発表</h1>
+        <div class="score" id="final-score">0 点</div>
+        <div class="stats">
+          <div><strong id="final-correct">0 / 0</strong><span>正解数</span></div>
+          <div><strong id="final-percentage">0%</strong><span>正答率</span></div>
+        </div>
+        <h2>回答の振り返り</h2>
+        <div id="answer-review"></div>
+        <div class="button-row">
+          <button id="restart-quiz" class="primary" type="button">もう一度挑戦</button>
+          <button id="back-home" class="secondary" type="button">ホームへ</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
